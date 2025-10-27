@@ -85,34 +85,34 @@ const printWinner = (movedCount) => {
   const winners = Object.keys(movedCount).filter(
     (key) => movedCount[key] === maxMove
   );
-  Console.print(`최종 우승자: ${winners.join(", ")}`);
+  Console.print(`최종 우승자 : ${winners.join(", ")}`);
 };
 
 const runCarRace = async () => {
-  try {
-    const movedCount = {};
-    const carNames = await readCarNames();
-    const attemptCount = await readAttemptCount();
+  const movedCount = {};
+  const carNames = await readCarNames();
+  const attemptCount = await readAttemptCount();
 
-    carNames.forEach((name) => {
-      movedCount[name] = 0;
-    });
+  carNames.forEach((name) => {
+    movedCount[name] = 0;
+  });
 
-    Console.print("\n실행 결과\n");
+  Console.print("\n실행 결과\n");
 
-    for (let i = 1; i <= attemptCount; i++) {
-      startRound(carNames, movedCount);
-    }
-
-    printWinner(movedCount);
-  } catch (error) {
-    throw new Error(`[ERROR] ${error.message}`);
+  for (let i = 1; i <= attemptCount; i++) {
+    startRound(carNames, movedCount);
   }
+
+  printWinner(movedCount);
 };
 
 class App {
   async run() {
-    await runCarRace();
+    try {
+      await runCarRace();
+    } catch (error) {
+      throw new Error(`[ERROR] ${error.message}`);
+    }
   }
 }
 
