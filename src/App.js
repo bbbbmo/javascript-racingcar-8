@@ -1,8 +1,8 @@
 import { Console, MissionUtils } from "@woowacourse/mission-utils";
 
-const PROGRESS_BAR = "-";
+export const PROGRESS_BAR = "-";
 
-const validateCarName = (carName) => {
+export const validateCarName = (carName) => {
   const trimmed = String(carName).trim();
   if (!trimmed) {
     throw new Error("자동차 이름을 입력해주세요.");
@@ -13,7 +13,7 @@ const validateCarName = (carName) => {
   return trimmed;
 };
 
-const checkNameDuplicate = (carNames) => {
+export const checkNameDuplicate = (carNames) => {
   const nameSet = new Set();
   for (const name of carNames) {
     if (nameSet.has(name)) {
@@ -23,7 +23,7 @@ const checkNameDuplicate = (carNames) => {
   }
 };
 
-const readCarNames = async () => {
+export const readCarNames = async () => {
   const input = await Console.readLineAsync(
     "경주할 자동차 이름을 입력하세요. (이름은 쉼표(,) 기준으로 구분) \n"
   );
@@ -35,7 +35,7 @@ const readCarNames = async () => {
 };
 
 // 시도 횟수 유효성 검사
-const validateAttemptCount = (count) => {
+export const validateAttemptCount = (count) => {
   if (count === undefined || count === null || String(count).trim() === "") {
     throw new Error("시도할 횟수를 입력해주세요.");
   }
@@ -53,24 +53,24 @@ const validateAttemptCount = (count) => {
   }
 };
 
-const readAttemptCount = async () => {
+export const readAttemptCount = async () => {
   const input = await Console.readLineAsync("시도할 횟수는 몇 회인가요? \n");
   const value = validateAttemptCount(input);
   return value;
 };
 
-const randomMove = () => {
+export const randomMove = () => {
   const randomValue = MissionUtils.Random.pickNumberInRange(0, 9);
   return randomValue >= 4;
 };
 
-const printProgress = (currentCar, movedCount) => {
+export const printProgress = (currentCar, movedCount) => {
   const currentMove = movedCount[currentCar] || 0;
   const currentProgress = PROGRESS_BAR.repeat(currentMove);
   Console.print(`${currentCar} : ${currentProgress}`);
 };
 
-const startRound = (carNames, movedCount) => {
+export const startRound = (carNames, movedCount) => {
   carNames.forEach((car) => {
     if (randomMove()) {
       movedCount[car] = (movedCount[car] || 0) + 1;
@@ -80,7 +80,7 @@ const startRound = (carNames, movedCount) => {
   Console.print("\n");
 };
 
-const printWinner = (movedCount) => {
+export const printWinner = (movedCount) => {
   const maxMove = Math.max(...Object.values(movedCount));
   const winners = Object.keys(movedCount).filter(
     (key) => movedCount[key] === maxMove
@@ -88,7 +88,7 @@ const printWinner = (movedCount) => {
   Console.print(`최종 우승자 : ${winners.join(", ")}`);
 };
 
-const runCarRace = async () => {
+export const runCarRace = async () => {
   const movedCount = {};
   const carNames = await readCarNames();
   const attemptCount = await readAttemptCount();
