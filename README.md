@@ -6,7 +6,7 @@
 
 **경주할 자동차 입력을 받고 이름을 검증하는 기능**
 
-- 입력: 입력한 자동차를 join으로 분리해 배열에 저장
+- 입력: 입력한 자동차를 split으로 분리해 배열에 저장
   - `Console.readLineAsync()`
 - 출력: “경주할 자동차 이름을 입력하세요.”
   - `Console.readLineAsync()`
