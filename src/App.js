@@ -55,12 +55,19 @@ const randomMove = () => {
   }
 };
 
+const printProgress = (currentCar, movedCars) => {
+  const currentMove = movedCars.filter((item) => item === currentCar).length;
+  const currentProgress = PROGRESS_BAR.repeat(currentMove);
+  Console.print(`${currentCar} : ${currentProgress}`);
+};
+
 const startRound = (carNames, movedCars) => {
   carNames.forEach((car) => {
     const canMove = randomMove();
     if (canMove) {
       movedCars.push(car);
     }
+    printProgress(car, movedCars);
   });
   Console.print("\n");
 };
