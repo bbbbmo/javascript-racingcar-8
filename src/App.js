@@ -1,5 +1,8 @@
-import { Console } from "@woowacourse/mission-utils";
+import { Console, MissionUtils } from "@woowacourse/mission-utils";
 
+const PROGRESS_BAR = "-";
+
+// 중복되는 자동차 이름 검사하기
 const validateCarName = (carName) => {
   const trimmed = String(carName).trim();
   if (!trimmed) {
@@ -43,14 +46,35 @@ const readAttemptCount = async () => {
   return value;
 };
 
+const randomMove = () => {
+  const randomValue = MissionUtils.Random.pickNumberInRange(0, 9);
+  if (randomValue >= 4) {
+    return true;
+  } else {
+    return false;
+  }
+};
+
+const startRound = (carNames, movedCars) => {
+  carNames.forEach((car) => {
+    const canMove = randomMove();
+    Console.print(canMove);
+  });
+  Console.print("\n");
+};
+
 class App {
   async run() {
     try {
-      const carsNames = await readCarNames();
+      const movedCars = [];
+      const carNames = await readCarNames();
       const attemptCount = await readAttemptCount();
 
-      Console.print(carsNames);
-      Console.print(attemptCount);
+      Console.print("\n실행 결과\n");
+
+      for (let i = 1; i <= attemptCount; i++) {
+        startRound(carNames, movedCars);
+      }
     } catch (error) {
       throw new Error(`[ERROR] ${error.message}`);
     }
