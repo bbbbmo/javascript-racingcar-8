@@ -58,7 +58,9 @@ const randomMove = () => {
 const startRound = (carNames, movedCars) => {
   carNames.forEach((car) => {
     const canMove = randomMove();
-    Console.print(canMove);
+    if (canMove) {
+      movedCars.push(car);
+    }
   });
   Console.print("\n");
 };
