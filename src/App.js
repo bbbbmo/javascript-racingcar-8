@@ -2,7 +2,6 @@ import { Console, MissionUtils } from "@woowacourse/mission-utils";
 
 const PROGRESS_BAR = "-";
 
-// 중복되는 자동차 이름 검사하기
 const validateCarName = (carName) => {
   const trimmed = String(carName).trim();
   if (!trimmed) {
@@ -14,16 +13,30 @@ const validateCarName = (carName) => {
   return trimmed;
 };
 
+const checkNameDuplicate = (carNames) => {
+  const nameSet = new Set();
+  for (const name of carNames) {
+    if (nameSet.has(name)) {
+      throw new Error(`중복된 자동차 이름이 있습니다. 이름: ${name}`);
+    }
+    nameSet.add(name);
+  }
+};
+
 const readCarNames = async () => {
   const input = await Console.readLineAsync(
     "경주할 자동차 이름을 입력하세요. (이름은 쉼표(,) 기준으로 구분) \n"
   );
-  const carNames = input.split(",").map((name) => validateCarName(name));
+  const rawNames = input.split(",");
+  const carNames = rawNames.map((name) => validateCarName(name));
+  checkNameDuplicate(carNames);
+
   return carNames;
 };
 
+// 시도 횟수 유효성 검사
 const validateAttemptCount = (count) => {
-  if (!count) {
+  if (count === undefined || count === null || String(count).trim() === "") {
     throw new Error("시도할 횟수를 입력해주세요.");
   }
 
@@ -34,7 +47,7 @@ const validateAttemptCount = (count) => {
   } else if (!Number.isInteger(numCount)) {
     throw new Error("시도할 횟수는 정수로 입력해주세요.");
   } else if (numCount <= 0) {
-    throw new Error("시도할 횟수는 0 이상의 양의 정수로 입력해주세요.");
+    throw new Error("시도할 횟수는 1 이상의 정수로 입력해주세요.");
   } else {
     return numCount;
   }
@@ -48,45 +61,48 @@ const readAttemptCount = async () => {
 
 const randomMove = () => {
   const randomValue = MissionUtils.Random.pickNumberInRange(0, 9);
-  if (randomValue >= 4) {
-    return true;
-  } else {
-    return false;
-  }
+  return randomValue >= 4;
 };
 
-const printProgress = (currentCar, movedCars) => {
-  const currentMove = movedCars.filter((item) => item === currentCar).length;
+const printProgress = (currentCar, movedCount) => {
+  const currentMove = movedCount[currentCar] || 0;
   const currentProgress = PROGRESS_BAR.repeat(currentMove);
   Console.print(`${currentCar} : ${currentProgress}`);
 };
 
-const startRound = (carNames, movedCars) => {
+const startRound = (carNames, movedCount) => {
   carNames.forEach((car) => {
-    const canMove = randomMove();
-    if (canMove) {
-      movedCars.push(car);
+    if (randomMove()) {
+      movedCount[car] = (movedCount[car] || 0) + 1;
     }
-    printProgress(car, movedCars);
+    printProgress(car, movedCount);
   });
   Console.print("\n");
 };
 
+const runCarRace = async () => {
+  try {
+    const movedCount = {};
+    const carNames = await readCarNames();
+    const attemptCount = await readAttemptCount();
+
+    carNames.forEach((name) => {
+      movedCount[name] = 0;
+    });
+
+    Console.print("\n실행 결과\n");
+
+    for (let i = 1; i <= attemptCount; i++) {
+      startRound(carNames, movedCount);
+    }
+  } catch (error) {
+    throw new Error(`[ERROR] ${error.message}`);
+  }
+};
+
 class App {
   async run() {
-    try {
-      const movedCars = [];
-      const carNames = await readCarNames();
-      const attemptCount = await readAttemptCount();
-
-      Console.print("\n실행 결과\n");
-
-      for (let i = 1; i <= attemptCount; i++) {
-        startRound(carNames, movedCars);
-      }
-    } catch (error) {
-      throw new Error(`[ERROR] ${error.message}`);
-    }
+    await runCarRace();
   }
 }
 
