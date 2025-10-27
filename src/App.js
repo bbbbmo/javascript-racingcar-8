@@ -80,6 +80,14 @@ const startRound = (carNames, movedCount) => {
   Console.print("\n");
 };
 
+const printWinner = (movedCount) => {
+  const maxMove = Math.max(...Object.values(movedCount));
+  const winners = Object.keys(movedCount).filter(
+    (key) => movedCount[key] === maxMove
+  );
+  Console.print(`최종 우승자: ${winners.join(", ")}`);
+};
+
 const runCarRace = async () => {
   try {
     const movedCount = {};
@@ -95,6 +103,8 @@ const runCarRace = async () => {
     for (let i = 1; i <= attemptCount; i++) {
       startRound(carNames, movedCount);
     }
+
+    printWinner(movedCount);
   } catch (error) {
     throw new Error(`[ERROR] ${error.message}`);
   }
